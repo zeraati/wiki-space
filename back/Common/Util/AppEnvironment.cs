@@ -1,5 +1,5 @@
 ﻿namespace Common.Util;
-public static class Environment
+public static class AppEnvironment
 {
     public static bool IsProduction()
         => GetAspNetCoreVariable("ASPNETCORE_ENVIRONMENT") == "Production";
@@ -11,5 +11,5 @@ public static class Environment
         => GetAspNetCoreVariable("APP_VERSION");
 
     private static string GetAspNetCoreVariable(string key)
-        => System.Environment.GetEnvironmentVariable(key) ?? "";
+        => Environment.GetEnvironmentVariable(key) ?? "";
 }
