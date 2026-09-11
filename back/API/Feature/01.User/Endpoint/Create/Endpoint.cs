@@ -1,5 +1,4 @@
-﻿using FastEndpoint;
-using API.Feature.Domain;
+﻿using API.Feature.Domain;
 
 namespace API.Feature.Endpoint;
 
