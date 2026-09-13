@@ -42,6 +42,62 @@ namespace API.Migrations
 
                     b.ToTable("User");
                 });
+
+            modelBuilder.Entity("API.Feature.Domain.Subject", b =>
+                {
+                    b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    b.Property<string>("Title").IsRequired().HasMaxLength(500).HasColumnType("nvarchar(500)");
+                    b.Property<bool>("IsActive").HasColumnType("bit");
+                    b.Property<DateTime>("UpdateAt").HasColumnType("datetime2");
+                    b.HasKey("Id");
+                    b.ToTable("Subject");
+                });
+
+            modelBuilder.Entity("API.Feature.Domain.Knowledge", b =>
+                {
+                    b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    b.Property<string>("ProblemTitle").IsRequired().HasMaxLength(2000).HasColumnType("nvarchar(2000)");
+                    b.Property<long>("SubjectId").HasColumnType("bigint");
+                    b.Property<long>("CreatedByUserId").HasColumnType("bigint");
+                    b.Property<int>("Status").HasColumnType("int");
+                    b.Property<DateTime?>("ValidityDate").HasColumnType("datetime2");
+                    b.Property<bool>("IsPermanently").HasColumnType("bit");
+                    b.Property<DateTime>("CreatedAt").HasColumnType("datetime2");
+                    b.Property<DateTime>("UpdateAt").HasColumnType("datetime2");
+                    b.HasKey("Id");
+                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("SubjectId");
+                    b.ToTable("Knowledge");
+                });
+
+            modelBuilder.Entity("API.Feature.Domain.KnowledgeTag", b =>
+                {
+                    b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    b.Property<long>("KnowledgeId").HasColumnType("bigint");
+                    b.Property<string>("Name").IsRequired().HasMaxLength(200).HasColumnType("nvarchar(200)");
+                    b.HasKey("Id");
+                    b.HasIndex("KnowledgeId", "Name").IsUnique();
+                    b.ToTable("KnowledgeTag");
+                });
+
+            modelBuilder.Entity("API.Feature.Domain.Knowledge", b =>
+                {
+                    b.HasOne("API.Feature.Domain.User", "CreatedByUser").WithMany().HasForeignKey("CreatedByUserId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                    b.HasOne("API.Feature.Domain.Subject", "Subject").WithMany().HasForeignKey("SubjectId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                    b.Navigation("CreatedByUser");
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("API.Feature.Domain.KnowledgeTag", b =>
+                {
+                    b.HasOne("API.Feature.Domain.Knowledge", "Knowledge").WithMany("Tags").HasForeignKey("KnowledgeId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+                    b.Navigation("Knowledge");
+                });
+
+            modelBuilder.Entity("API.Feature.Domain.Knowledge", b => b.Navigation("Tags"));
 #pragma warning restore 612, 618
         }
     }
