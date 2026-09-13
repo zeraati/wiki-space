@@ -17,15 +17,46 @@ public partial class Knowledge
     }
 
     public void Update(string problemTitle, long subjectId, IEnumerable<string> tags,
-        KnowledgeStatus status, DateTime? validityDate, bool isPermanently)
+        DateTime? validityDate, bool isPermanently)
     {
+        if (Status == KnowledgeStatus.Approved)
+            throw new InvalidOperationException("Approved knowledge can only be edited through the review workflow.");
+
         ProblemTitle = RequireTitle(problemTitle);
         SubjectId = subjectId;
-        Status = status;
         ValidityDate = validityDate;
         IsPermanently = isPermanently;
         ReplaceTags(tags);
+        if (Status == KnowledgeStatus.NeedsRevision)
+            Status = KnowledgeStatus.EditedPendingReview;
         UpdateAt = DateTime.Now;
+    }
+
+    public void Approve()
+    {
+        EnsureReviewable();
+        Status = KnowledgeStatus.Approved;
+        UpdateAt = DateTime.Now;
+    }
+
+    public void RequestRevision()
+    {
+        EnsureReviewable();
+        Status = KnowledgeStatus.NeedsRevision;
+        UpdateAt = DateTime.Now;
+    }
+
+    public void Reject()
+    {
+        EnsureReviewable();
+        Status = KnowledgeStatus.Rejected;
+        UpdateAt = DateTime.Now;
+    }
+
+    private void EnsureReviewable()
+    {
+        if (Status is not (KnowledgeStatus.PendingReview or KnowledgeStatus.EditedPendingReview))
+            throw new InvalidOperationException("Only knowledge awaiting review can be reviewed.");
     }
 
     private void ReplaceTags(IEnumerable<string> tags)

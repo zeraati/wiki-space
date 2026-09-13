@@ -12,6 +12,13 @@ public enum KnowledgeStatus
     Expired = 6
 }
 
+public enum KnowledgeReviewAction
+{
+    Approved = 1,
+    RevisionRequested = 2,
+    Rejected = 3
+}
+
 public partial class Knowledge : BaseEntity
 {
     private Knowledge() { }
@@ -39,6 +46,30 @@ public class KnowledgeTag
     public KnowledgeTag(string name) => Name = name;
 }
 
+public class KnowledgeReviewHistory
+{
+    private KnowledgeReviewHistory() { }
+
+    public long Id { get; private set; }
+    public long KnowledgeId { get; private set; }
+    public Knowledge Knowledge { get; private set; } = null!;
+    public long ReviewerUserId { get; private set; }
+    public User ReviewerUser { get; private set; } = null!;
+    public KnowledgeReviewAction Action { get; private set; }
+    public string? Reason { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+
+    public KnowledgeReviewHistory(long knowledgeId, long reviewerUserId,
+        KnowledgeReviewAction action, string? reason)
+    {
+        KnowledgeId = knowledgeId;
+        ReviewerUserId = reviewerUserId;
+        Action = action;
+        Reason = string.IsNullOrWhiteSpace(reason) ? null : reason.Trim();
+        CreatedAt = DateTime.Now;
+    }
+}
+
 public class KnowledgeConfig : IEntityTypeConfiguration<Knowledge>
 {
     public void Configure(EntityTypeBuilder<Knowledge> builder)
@@ -60,5 +91,21 @@ public class KnowledgeTagConfig : IEntityTypeConfiguration<KnowledgeTag>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
         builder.HasIndex(x => new { x.KnowledgeId, x.Name }).IsUnique();
+    }
+}
+
+public class KnowledgeReviewHistoryConfig : IEntityTypeConfiguration<KnowledgeReviewHistory>
+{
+    public void Configure(EntityTypeBuilder<KnowledgeReviewHistory> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Action).IsRequired();
+        builder.Property(x => x.Reason).HasMaxLength(2000);
+        builder.Property(x => x.CreatedAt).IsRequired();
+        builder.HasOne(x => x.Knowledge).WithMany().HasForeignKey(x => x.KnowledgeId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(x => x.ReviewerUser).WithMany().HasForeignKey(x => x.ReviewerUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasIndex(x => new { x.KnowledgeId, x.CreatedAt });
     }
 }

@@ -10,7 +10,7 @@ public class KnowledgeUpdate(AppDbContext db) : FastEndpoint<KnowledgeUpdateRequ
     {
         var knowledge = await db.Set<Knowledge>().Include(x => x.Tags)
             .SingleAsync(x => x.Id == request.Id, cancellation);
-        knowledge.Update(request.ProblemTitle, request.SubjectId, request.Tags, request.Status,
+        knowledge.Update(request.ProblemTitle, request.SubjectId, request.Tags,
             request.ValidityDate, request.IsPermanently);
         await db.SaveChangesAsync(cancellation);
     }

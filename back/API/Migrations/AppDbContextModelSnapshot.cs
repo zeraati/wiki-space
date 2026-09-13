@@ -83,6 +83,21 @@ namespace API.Migrations
                     b.ToTable("KnowledgeTag");
                 });
 
+            modelBuilder.Entity("API.Feature.Domain.KnowledgeReviewHistory", b =>
+                {
+                    b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    b.Property<long>("KnowledgeId").HasColumnType("bigint");
+                    b.Property<long>("ReviewerUserId").HasColumnType("bigint");
+                    b.Property<int>("Action").HasColumnType("int");
+                    b.Property<string>("Reason").HasMaxLength(2000).HasColumnType("nvarchar(2000)");
+                    b.Property<DateTime>("CreatedAt").HasColumnType("datetime2");
+                    b.HasKey("Id");
+                    b.HasIndex("KnowledgeId", "CreatedAt");
+                    b.HasIndex("ReviewerUserId");
+                    b.ToTable("KnowledgeReviewHistory");
+                });
+
             modelBuilder.Entity("API.Feature.Domain.Knowledge", b =>
                 {
                     b.HasOne("API.Feature.Domain.User", "CreatedByUser").WithMany().HasForeignKey("CreatedByUserId").OnDelete(DeleteBehavior.Restrict).IsRequired();
@@ -95,6 +110,14 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Feature.Domain.Knowledge", "Knowledge").WithMany("Tags").HasForeignKey("KnowledgeId").OnDelete(DeleteBehavior.Cascade).IsRequired();
                     b.Navigation("Knowledge");
+                });
+
+            modelBuilder.Entity("API.Feature.Domain.KnowledgeReviewHistory", b =>
+                {
+                    b.HasOne("API.Feature.Domain.Knowledge", "Knowledge").WithMany().HasForeignKey("KnowledgeId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+                    b.HasOne("API.Feature.Domain.User", "ReviewerUser").WithMany().HasForeignKey("ReviewerUserId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                    b.Navigation("Knowledge");
+                    b.Navigation("ReviewerUser");
                 });
 
             modelBuilder.Entity("API.Feature.Domain.Knowledge", b => b.Navigation("Tags"));

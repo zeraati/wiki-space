@@ -1,5 +1,3 @@
-using API.Feature.Domain;
-
 namespace API.Feature.Endpoint;
 
 public record KnowledgeUpdateRequest(
@@ -7,6 +5,5 @@ public record KnowledgeUpdateRequest(
     string ProblemTitle,
     long SubjectId,
     string[] Tags,
-    KnowledgeStatus Status,
     DateTime? ValidityDate,
     bool IsPermanently);
