@@ -10,7 +10,7 @@ public static partial class ServiceConfig
         services
             .Configure<JwtSigningOptions>(x =>
             {
-                x.SigningKey = File.ReadAllText("Common/jwt-public-key.pem");
+                x.SigningKey = File.ReadAllText("jwt-public-key.pem");
                 x.KeyIsPemEncoded = true;
                 x.SigningStyle = TokenSigningStyle.Asymmetric;
             });

@@ -15,8 +15,8 @@ public static class JwtKeyMaker
         var publicKey = rsa.ExportSubjectPublicKeyInfo();
         string publicPem = ToPem("PUBLIC KEY", publicKey);
 
-        File.WriteAllText("Common/jwt-private-key.pem", privatePem, Encoding.ASCII);
-        File.WriteAllText("Common/jwt-public-key.pem", publicPem, Encoding.ASCII);
+        File.WriteAllText("jwt-private-key.pem", privatePem, Encoding.ASCII);
+        File.WriteAllText("jwt-public-key.pem", publicPem, Encoding.ASCII);
     }
 
     private static string ToPem(string label, byte[] derBytes)
