@@ -22,4 +22,12 @@
 		<ProjectReference Include="..\Common\Common.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="Common\jwt-public-key.pem">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	    <TargetPath>jwt-public-key.pem</TargetPath>
+	  </None>
+	</ItemGroup>
+
 </Project>
