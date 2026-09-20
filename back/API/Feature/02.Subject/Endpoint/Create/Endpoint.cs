@@ -7,6 +7,7 @@ public class SubjectCreate(AppDbContext db) : FastEndpoint<SubjectCreateRequest,
     public override void Configure()
     {
         Post("subject");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(SubjectCreateRequest request, CancellationToken cancellation)

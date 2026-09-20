@@ -5,6 +5,7 @@ public class AuthLogin : FastEndpointWithoutRequest<object>
     public override void Configure()
     {
         Post("auth/login");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken cancellation)
